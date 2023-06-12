@@ -1,2 +1,2 @@
 #!/bin/bash
-ls -lt --group-directories-first | grep -v '^d' | head -10
+ls -lt | awk '{if(NR>1)print $NF}' | head -n 10
