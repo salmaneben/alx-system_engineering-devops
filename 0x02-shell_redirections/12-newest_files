@@ -1,2 +1,2 @@
 #!/bin/bash
-ls -lt | awk '{if(NR>1)print $NF}' | head -n 10
+ls -t | head -n 10
