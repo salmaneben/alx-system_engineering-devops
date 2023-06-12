@@ -1,0 +1,2 @@
+#!/bin/bash
+ls -lt --group-directories-first | grep -v '^d' | head -10
