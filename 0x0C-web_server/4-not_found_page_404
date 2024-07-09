@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# a Bash script that installs nginx on our web-01 server
+# custom 404 page
+sudo apt-get -y update
+sudo apt-get -y install nginx
+sudo service nginx start
+echo "Ceci n'est pas une page" | sudo tee /var/www/html/page404.html
+myc="\terror_page 404 \/page404.html;\n"
+st="\tlocation \/ {"
+sudo sed -i "0,/$st/{s/$st/$myc$st/}" /etc/nginx/sites-enabled/default
+sudo service nginx restart
