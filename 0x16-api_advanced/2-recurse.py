@@ -1,49 +1,37 @@
 #!/usr/bin/python3
-"""Queries the Reddit API and
-returns a list containing the
-titles of all hot articles for
-a given subreddit.
-
-If no results are found for the
-given subreddit, the function
-should return None.
 """
+Recursive function that queries the Reddit API and returns
+a list containing the titles of all hot articles for a given subreddit.
+If no results are found for the given subreddit,
+the function should return None.
+"""
+
 import requests
 
 
-def recurse(subreddit, hot_list=[], after=''):
-    """Returns a list containing the titles of all
-    hot articles for a given subreddit.
+def recurse(subreddit, hot_list=[], after=""):
     """
-    # Set the Default URL strings
-    base_url = 'https://www.reddit.com'
-    api_uri = '{base}/r/{subreddit}/hot.json'.format(base=base_url,
-                                                     subreddit=subreddit)
+    Queries the Reddit API and returns
+    a list containing the titles of all hot articles for a given subreddit.
 
-    # Set an User-Agent
-    user_agent = {'User-Agent': 'Python/requests'}
+    - If not a valid subreddit, return None.
+    """
+    req = requests.get(
+        "https://www.reddit.com/r/{}/hot.json".format(subreddit),
+        headers={"User-Agent": "Custom"},
+        params={"after": after},
+    )
 
-    # Set the Query Strings to Request
-    payload = {'after': after, 'limit': '100'}
+    if req.status_code == 200:
+        for get_data in req.json().get("data").get("children"):
+            dat = get_data.get("data")
+            title = dat.get("title")
+            hot_list.append(title)
+        after = req.json().get("data").get("after")
 
-    # Get the Response of the Reddit API
-    res = requests.get(api_uri, headers=user_agent,
-                       params=payload, allow_redirects=False)
-
-    # Checks if the subreddit is invalid
-    if res.status_code == 200:
-        res = res.json()
-        hot_posts = res.get('data').get('children')
-        after = res.get('data').get('after')
-
-        # Print each hot post title
-        for post in hot_posts:
-            hot_list.append(post.get('data').get('title'))
-
-        # Get the next page of hot posts
-        if after is not None:
-            recurse(subreddit, hot_list, after)
-
-        return hot_list
-
-    return None
+        if after is None:
+            return hot_list
+        else:
+            return recurse(subreddit, hot_list, after)
+    else:
+        return None
