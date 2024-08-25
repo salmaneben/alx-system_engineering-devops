@@ -1,4 +1,6 @@
-#!/usr/bin/env bash
-# Gracefully reloads Gunicorn
+#!/bin/bash
+
+# Gracefully reload Gunicorn by sending the HUP signal to the master process
+# This will cause Gunicorn to reload its configuration and restart the workers
 
 pgrep gunicorn | xargs kill -HUP
